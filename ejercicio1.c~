@@ -1,0 +1,24 @@
+/* Ejercicio 1
+#Tarea 6 metodos computacionales*/
+/* Manuel Ariza Fuentes y Billy Revelo */
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
+
+int main(int argc, char **argv){
+FILE *filename;
+
+/* Constantes de derivacion */
+double h=0.01;
+double min_x = 0.0;
+double max_x = 1.0;
+int n_points =101;
+int n_time=121;
+int i=0;
+
+/*Revisa que el numero de argumentos sea correcto*/
+if(argc!=3){
+printf("No se ingresaron los 2 argumentos requeridos \n");
+exit(1);
+}
