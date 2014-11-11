@@ -1,0 +1,38 @@
+import sys
+import matplotlib.pyplot as plt
+import numpy as np
+
+#Importa el archivo
+filename = sys.argv[1]
+
+matriz = np.loadtxt(filename)
+
+velocidad = data;
+
+
+posicion= np.zeros(shape=(120,100))
+tiempo= np.zeros(shape=(120,100))
+k=0
+
+
+#Traspone la matriz
+
+for i in range (0,121):
+    for j in range(0,101):
+        tiempo[i][j]=contador1
+    k=k+1
+
+posicion=tiempo.tranpose()
+
+#metodo que plotea la superficie generada.
+fig = plt.figure(figsize=(9, 6))
+ax = fig.add_subplot(111, projection = '3d')
+ax.plot_wireframe(t,x,y,rstride=2,cstride=1, color ='y')
+ax.view_init(elev=40, azim=15)
+ax.set_xlabel('tiempo',fontsize=15)
+ax.set_ylabel('Eje x',fontsize=15)
+ax.set_zlabel('Eje Y',fontsize=15)
+ax.set_title('Comportamiento cuerda',fontsize=20)
+
+#metodo que guarda la imagen
+plt.savefig(filename+'.pdf', format = 'pdf')
