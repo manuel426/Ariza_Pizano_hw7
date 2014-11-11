@@ -1,0 +1,12 @@
+FOO = $(t)
+
+all: estado_$(FOO).pdf
+
+estado_$(FOO).pdf:graficas.py estado_t.dat
+	python graficas.py estado_t.dat
+
+estado_t.dat: estado.x
+	./estado.x FOO
+
+estado.x:Shock.c
+	cc Shock.c -o estado.x -lm
