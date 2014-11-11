@@ -98,8 +98,15 @@ exit(1);
 
 
 
-for(i=0;i<longitud;i++){
+ for(i=1;i<(longitud);i++){
+ if(i==(longitud-1)){
+   fprintf(filename,"%.6f ",u_future[longitud-1]);
+ }
+ else {
 u_future[i]=u_initial[i]+(r*r/2.0)*(u_initial[i+1]-2.0*u_initial[i]+u_initial[i-1]);
+ fprintf(filename,"%.6f",u_future[i]);
+
+ }
 
 
 /* #create a new variable to hold the previous value */
@@ -108,7 +115,7 @@ u_past[i] = u_initial[i];
 u_present[i] = u_future[i];
 
 }
-
+ fprintf(filename,"\n");
       
 
   /* next iterations */
