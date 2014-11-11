@@ -10,13 +10,12 @@ int main(int argc, char **argv){
 FILE *filename;
 
 /* Constantes de derivacion */
-int n_points =200;
+int n_points =10;
 int n_time=121;
 int i=0;
 double constante=0.0;
-int tension=40;
+double tension=40.0;
 int longitud =101;
-float rhofinal=0.0;
 int j=0;
 
 /*Revisa que el numero de argumentos sea correcto*/
@@ -25,29 +24,31 @@ printf("No se ingreso el argumento requerido \n");
 exit(1);
 }
 
-/* Punteros de la variable */
-float* rho;
-
-/* Espacio para los 3 punteros */
-rho = malloc(5*sizeof(float));
+/* Variable */
+float rho;
 
 /*Las condiciones iniciales */
-rho[0] = atof(argv[1]);
+rho = atof(argv[1]);
 
-rhofinal=rho[0];
 
-constante=tension/rhofinal;
+constante=sqrt(tension/rho);
 /* Arreglos de espacio y tiempo */
 
-int tiempo[n_time];
 int posicion[longitud];
-float velocidad[n_time][longitud];
+float u_initial[longitud];
+float u_future[longitud];
+float u_past[longitud];
+float u_present[longitud];
+double delta_x=0.0;
+double delta_t=0.0;
+double r=0.0;
 
+/* #find the first iteration for fixed boundary conditions */
+delta_x = longitud/n_points;
+delta_t = 0.001;
 
-for (i=0;i<n_time;i++)
-  { tiempo[i]=i;
+r = constante * delta_t / delta_x; /* Tiene que ser menor que 1 */
 
-}
 
 for (i=0;i<longitud;i++)
   { posicion[i]=i;
@@ -55,36 +56,80 @@ for (i=0;i<longitud;i++)
 }
 
 
-for(i=0;i<0.8*longitud;i++)
-  { velocidad[0][i]=1.25*i/longitud;
+for(i=0;i<longitud;i++)
+{
+
+if((i) <= (0.8*longitud))
+{
+u_initial[i] = (1.25*i)/longitud;
+}
+else if((i)>(0.8*longitud))
+{
+u_initial[i] = 5-((5*i)/longitud);
+
+}
+}
+
+for (i=0;i<longitud;i++)
+  { u_future[i]=0.0;
+
+}
+for (i=0;i<longitud;i++)
+  { u_past[i]=0.0;
+
+}
+for (i=0;i<longitud;i++)
+  { u_present[i]=0.0;
 
 }
 
-for(i=0.8*longitud;i<longitud;i++)
-  { velocidad[0][i]=5-5*i/longitud;
-
-}
-
-
-
-
-
-
-/*Crea el archivo y escribe en el*/
 char archivo[100]="string_rho.dat";
-sprintf(archivo, "string_%f.dat", rhofinal);
+sprintf(archivo, "string_%.3f.dat", rho);
 filename = fopen(archivo,"w");
-printf("El archivo fue creado con exito");
+printf("%f \n ",r);
+
+
+
+
 if(!filename){
 printf("problemas con el archivo %s\n", archivo);
 exit(1);
 }
-/* Las 3 columnas de las variables, incluyendo las condiciones iniciales */
-for(i=0;i<n_time;i++){
-    for(j=0;j<longitud;j++){
-        fprintf(filename, "%d %f \n", tiempo[i], velocidad[i][j]);
+
+
+
+for(i=0;i<longitud;i++){
+u_future[i]=u_initial[i]+(r*r/2.0)*(u_initial[i+1]-2.0*u_initial[i]+u_initial[i-1]);
+
+
+/* #create a new variable to hold the previous value */
+u_past[i] = u_initial[i];
+      /* #create a new variable to hold the present value */
+u_present[i] = u_future[i];
+
+}
+
+      
+
+  /* next iterations */
+
+for(j=0;j<n_time;j++)
+{
+for(i=0;i<longitud;i++)
+    {
+u_future[i]=(2.0*(1.0-r*r))*u_present[i]-u_past[i]+(r*r)*(u_present[i+1]+u_present[i-1]);
+
+          
+  fprintf(filename,"%.6f ", u_initial[i]);
+       
           }
-     }
+          u_past[i]=u_present[i];
+          u_present[i]=u_future[i];
+          fprintf(filename,"\n");
+        }
+
+
+/* Crea el archivo y escribe en el */
 
 
 
@@ -94,6 +139,4 @@ fclose(filename);
 
 return 0;
 }
-
-
 
